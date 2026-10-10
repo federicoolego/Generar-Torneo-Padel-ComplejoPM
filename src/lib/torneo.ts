@@ -55,7 +55,7 @@ export type Instancia = 'zonas' | '16avos' | 'octavos' | 'cuartos' | 'semifinal'
 
 export const FORMATOS: { id: Formato; nombre: string; corto: string }[] = [
   { id: 'mejor_de_3', nombre: 'Al mejor de 3 sets', corto: 'Mejor de 3 sets' },
-  { id: 'mejor_de_3_stb', nombre: 'Al mejor de 3 sets, el 3ro super tiebreak', corto: 'Mejor de 3 · 3ro super TB' },
+  { id: 'mejor_de_3_stb', nombre: 'Al mejor de 3 sets, el 3ro super tiebreak a 11', corto: 'Mejor de 3 · 3ro super TB a 11' },
   { id: 'americano_7', nombre: 'Americano a 7 games', corto: 'Americano a 7' },
   { id: 'americano_9', nombre: 'Americano a 9 games', corto: 'Americano a 9' },
 ]
@@ -71,9 +71,9 @@ export const INSTANCIAS: { id: Instancia; nombre: string }[] = [
 ]
 export const nombreInstancia = (i: Instancia) => INSTANCIAS.find((x) => x.id === i)?.nombre ?? i
 
-/** Complejo PM: todas las instancias en americano a 7 games */
+/** Lo que más se juega: americano a 9 hasta cuartos; semi y final al mejor de 3 con super tiebreak */
 export const FORMATOS_DEFECTO: Record<Instancia, Formato> = {
-  zonas: 'americano_7', '16avos': 'americano_7', octavos: 'americano_7', cuartos: 'americano_7', semifinal: 'americano_7', final: 'americano_7',
+  zonas: 'americano_9', '16avos': 'americano_9', octavos: 'americano_9', cuartos: 'americano_9', semifinal: 'mejor_de_3_stb', final: 'mejor_de_3_stb',
 }
 
 /**
@@ -115,6 +115,10 @@ export function nuevoId(): string {
   return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`
 }
 export const esUuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v)
+
+/** Datos obligatorios del paso "Torneo": nombre y fechas (fin igual o posterior al inicio). Recién ahí se crea en la base */
+export const datosCompletos = (c: Pick<Categoria, 'torneo' | 'fechaInicio' | 'fechaFin'>) =>
+  !!c.torneo.trim() && !!c.fechaInicio && !!c.fechaFin && c.fechaFin >= c.fechaInicio
 
 export function nuevaCategoria(): Categoria {
   return {
